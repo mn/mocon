@@ -1,4 +1,4 @@
-MOCON Project’s Schematic:
+MOCON Project’s Schematic: (Not everything has been implemented yet in main file, only the base is built)
 
 ![Alt text](https://i.imgur.com/h8sTPgK.jpeg)
 
@@ -33,3 +33,5 @@ The objective of this project is to develop a Python-based automation script (bo
 ### Goal:
 The goal of this project is to automate the `.prn` to `.pdf` conversion process in an efficient and fault-tolerant manner, ensuring reliable and seamless integration with **Google Drive**. The script will be simple to configure and flexible enough to handle potential errors, enabling continuous operation without manual intervention.
 
+### PDF Example
+![Alt text](https://i.imgur.com/bZOzFga.png)
