@@ -1,4 +1,4 @@
-MOCON Project’s Schematic: (Not everything has been implemented yet in main file, only the base is built)
+MOCON Project’s Schematic: (Not everything has been implemented yet in prn_file_monitor.py, only the base is built)
 
 ![Alt text](https://i.imgur.com/h8sTPgK.jpeg)
 
