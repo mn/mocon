@@ -2,7 +2,7 @@ MOCON Project’s Schematic: (Not everything has been implemented yet in prn_fil
 
 ## DIAGRAM created of what will be done:
 
-### Scope/Objective With AI
+### With AI
 ![Alt text](https://i.imgur.com/Am5BtGz.jpeg)
 ### Without AI
 ![Alt text](https://i.imgur.com/h8sTPgK.jpeg)
