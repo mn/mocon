@@ -34,5 +34,5 @@ The objective of this project is to develop a Python-based automation script (bo
 ### Goal:
 The goal of this project is to automate the `.prn` to `.pdf` conversion process in an efficient and fault-tolerant manner, ensuring reliable and seamless integration with **Google Drive**. The script will be simple to configure and flexible enough to handle potential errors, enabling continuous operation without manual intervention.
 
-### PDF Example
+### Current PDF Example (We can figure out how to include color/diagrams/design)
 ![Alt text](https://i.imgur.com/bZOzFga.png)
