@@ -1,10 +1,6 @@
 MOCON Project’s Schematic: (Not everything has been implemented yet in prn_file_monitor.py, only the base is built)
 
 ## DIAGRAM created of what will be done:
-
-### With AI
-![Alt text](https://i.imgur.com/Am5BtGz.jpeg)
-### Without AI
 ![Alt text](https://i.imgur.com/h8sTPgK.jpeg)
 
 # PRN-to-PDF Automated Reporting System
@@ -37,6 +33,3 @@ The objective of this project is to develop a Python-based automation script (bo
 
 ### Goal:
 The goal of this project is to automate the `.prn` to `.pdf` conversion process in an efficient and fault-tolerant manner, ensuring reliable and seamless integration with **Google Drive**. The script will be simple to configure and flexible enough to handle potential errors, enabling continuous operation without manual intervention.
-
-### Current PDF Example (We can figure out how to include color/diagrams/design)
-![Alt text](https://i.imgur.com/bZOzFga.png)
