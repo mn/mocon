@@ -1,5 +1,8 @@
 MOCON Project’s Schematic:
 
+## Latest Version Update
+![Alt text](https://i.imgur.com/xej7aIH.png)
+
 ## COPY OF CURRENT VERSION
 ![Alt text](https://i.imgur.com/YEyH6J5.png)
 
