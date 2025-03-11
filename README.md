@@ -7,7 +7,7 @@ MOCON Project’s End of Day Update Version:
 ![Alt text](https://i.imgur.com/F3y1UWq.png)
 
 ## (Archived) Old Version Update 3/10
-![Alt text](https://i.imgur.com/F3y1UWq.png)
+![Alt text](https://i.imgur.com/UaND1PU.png)
 
 ## Example Logic
 ![Alt text](https://i.imgur.com/TdD4SUw.png)
