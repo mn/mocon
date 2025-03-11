@@ -146,20 +146,44 @@ def create_pdf_from_prn(prn_file):
     y_position -= 10
     
     draw_section("Statistical Summary")
-    for key in ["Samples", "Mean", "Maximum", "Minimum"]:
-        if key in data_fields:
-            draw_text(f"{key}: {data_fields[key]}")
+    
+    # Create a mini table for the Statistical Summary
+    stats_data = [
+        ["Samples: " + data_fields.get("Samples", "(Not Provided)")],
+        ["Mean: " + data_fields.get("Mean", "(Not Provided)")],
+        ["Maximum: " + data_fields.get("Maximum", "(Not Provided)")],
+        ["Minimum: " + data_fields.get("Minimum", "(Not Provided)")]
+    ]
     
     prn_text = "\n".join(prn_content)
     max_dev_match = re.search(r"Max Dev:\s*([\d.]+ mg\s+\d+\.\d+% of target)", prn_text)
     std_dev_match = re.search(r"Std Dev:\s*([\d.]+ mg\s+\d+\.\d+% Rel Std Dev)", prn_text)
 
     if max_dev_match:
-        draw_text(f"Max Dev: {max_dev_match.group(1)}")
+        stats_data.append(["Max Dev: " + max_dev_match.group(1)])
     if std_dev_match:
-        draw_text(f"Std Dev: {std_dev_match.group(1)}")
+        stats_data.append(["Std Dev: " + std_dev_match.group(1)])
     
-    y_position -= 20
+    stats_table = Table(stats_data, colWidths=[width - left_margin - right_margin])
+    stats_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+    ]))
+    
+    stats_table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
+    _, stats_table_height = stats_table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)  # Calculate table height
+    if y_position < stats_table_height + bottom_margin:
+        add_footer()
+        c.showPage()
+        y_position = height - top_margin
+    stats_table.drawOn(c, left_margin, y_position - stats_table_height)
+    y_position -= stats_table_height + 20
     
     weight_sections = re.split(r"WEIGHTS IN (.*?) RANGE", prn_text)[1:]
     for i in range(0, len(weight_sections), 2):
