@@ -148,6 +148,10 @@ def create_pdf_from_prn(prn_file):
         draw_text(text)
     y_position -= 10
     
+    # Add custom field "Reweigh of Rejected Caps"
+    draw_text("Reweigh of Rejected Caps: ____________", bold=True)
+    y_position -= 10
+    
     # Remove the "Statistical Summary" title and push the table up
     samples_value = data_fields.get("Samples", "(Not Provided)")
     stats_data = [
@@ -159,7 +163,7 @@ def create_pdf_from_prn(prn_file):
     
     prn_text = "\n".join(prn_content)
     max_dev_match = re.search(r"Max Dev:\s*([\d.]+ mg\s+\d+\.\d+% of target)", prn_text)
-    std_dev_match = re.search(r"Std Dev:\s*([\d.]+ mg\s+\d+\.\d+% Rel Std Dev)", prn_text)
+    std_dev_match = re.search(r"Std Dev:\s*([\d.]+ mg\s+\.\d+% Rel Std Dev)", prn_text)
 
     if max_dev_match:
         stats_data.append(["Max Dev: " + max_dev_match.group(1)])
