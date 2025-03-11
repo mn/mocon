@@ -10,7 +10,7 @@ MOCON Project’s End of Day Update Version:
 ![Alt text](https://i.imgur.com/UaND1PU.png)
 
 ## Example Logic
-![Alt text](https://i.imgur.com/TdD4SUw.png)
+![Alt text](https://i.imgur.com/nkBmLUO.png)
 
 # PRN-to-PDF Automated Reporting System
 
