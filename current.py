@@ -7,6 +7,7 @@ from reportlab.platypus import Table, TableStyle
 import os
 import time
 import re
+from datetime import datetime
 
 # Define the folder to monitor
 WATCH_DIRECTORY = r"C:\Users\client27\Desktop\Converter"
@@ -24,7 +25,20 @@ def create_pdf_from_prn(prn_file):
     bottom_margin = 72
     
     width, height = letter
-    center_x = width / 2
+
+    # Add page number and generation timestamp to each page
+    generation_time_string = "Generated on: 2025-03-11 15:02:45"
+    page_number = 1
+    
+    def add_footer():
+        nonlocal page_number
+        c.setFont("Helvetica", 8)
+        # Add generation timestamp to the left side
+        c.drawString(left_margin, bottom_margin - 10, generation_time_string)
+        # Add page number to the right side
+        page_text = f"Page {page_number}"
+        c.drawRightString(width - right_margin, bottom_margin - 10, page_text)
+        page_number += 1
     
     try:
         with open(prn_file, 'r', encoding='latin-1') as file:
@@ -59,7 +73,7 @@ def create_pdf_from_prn(prn_file):
     c.setFillColor(colors.blue)  # Title in blue
     title_text = "MOCON Automatic Balance Analysis System"
     title_width = c.stringWidth(title_text, "Helvetica-Bold", 16)
-    c.drawString(center_x - (title_width / 2), y_position, title_text)
+    c.drawString((width - title_width) / 2, y_position, title_text)
 
     # Reset text color to black for the rest of the document
     c.setFillColor(colors.black)
@@ -73,21 +87,23 @@ def create_pdf_from_prn(prn_file):
     def draw_section(title):
         nonlocal y_position
         if y_position < bottom_margin:
+            add_footer()
             c.showPage()
             y_position = height - top_margin
         c.setFont("Helvetica-Bold", 12)
         title_width = c.stringWidth(title, "Helvetica-Bold", 12)
-        c.drawString(center_x - (title_width / 2), y_position, title)
+        c.drawString((width - title_width) / 2, y_position, title)
         y_position -= 15
     
     def draw_text(text, font="Helvetica", size=10):
         nonlocal y_position
         if y_position < bottom_margin:
+            add_footer()
             c.showPage()
             y_position = height - top_margin
         c.setFont(font, size)
         text_width = c.stringWidth(text, font, size)
-        c.drawString(center_x - (text_width / 2), y_position, text)
+        c.drawString((width - text_width) / 2, y_position, text)
         y_position -= 12
 
     draw_section("Report Details")
@@ -172,11 +188,13 @@ def create_pdf_from_prn(prn_file):
         table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
         _, table_height = table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)  # Calculate table height
         if y_position < table_height + bottom_margin:
+            add_footer()
             c.showPage()
             y_position = height - top_margin
         table.drawOn(c, left_margin, y_position - table_height)
         y_position -= table_height + 20
     
+    add_footer()
     c.save()
     print(f"PDF saved as {pdf_file}")
 
