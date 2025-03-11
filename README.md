@@ -1,4 +1,4 @@
-MOCON Project’s Schematic:
+MOCON Project’s End of Day Update Version:
 
 ## Latest Version Update 3/10
 ![Alt text](https://i.imgur.com/xej7aIH.png)
