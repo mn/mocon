@@ -3,7 +3,7 @@ MOCON Project’s Schematic:
 ## Latest Version Update 3/10
 ![Alt text](https://i.imgur.com/xej7aIH.png)
 
-## Example
+## Example Logic
 ![Alt text](https://i.imgur.com/YEyH6J5.png)
 
 # PRN-to-PDF Automated Reporting System
