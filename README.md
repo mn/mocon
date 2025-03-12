@@ -5,7 +5,7 @@ MOCON Project’s End of Day Update Version:
 + Updated Custom Fields
 + Added Custom Fields
   
-![Alt text](https://i.imgur.com/1C6EarK.png)
+![Alt text](https://i.imgur.com/zAInUlr.png)
 
 ## Latest Version Update 3/11
 + Added Graphs
