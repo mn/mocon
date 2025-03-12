@@ -12,7 +12,7 @@ from datetime import datetime
 # Define the folder to monitor
 WATCH_DIRECTORY = r"C:\Users\client27\Desktop\Converter"
 
-print(f"Watching directory: {WATCH_DIRECTORY}")
+print(f"\033[93mWatching directory: {WATCH_DIRECTORY}\033[0m")
 
 # PDF generation function
 def create_pdf_from_prn(prn_file):
@@ -39,7 +39,13 @@ def create_pdf_from_prn(prn_file):
         page_text = f"Page {page_number}"
         c.drawRightString(width - right_margin, bottom_margin - 10, page_text)
         page_number += 1
-    
+
+    def new_page():
+        add_footer()
+        c.showPage()
+        nonlocal y_position
+        y_position = height - top_margin
+
     try:
         with open(prn_file, 'r', encoding='latin-1') as file:
             prn_content = file.readlines()
@@ -87,9 +93,7 @@ def create_pdf_from_prn(prn_file):
     def draw_section(title):
         nonlocal y_position
         if y_position < bottom_margin + 20:  # Add buffer space for the footer
-            add_footer()
-            c.showPage()
-            y_position = height - top_margin
+            new_page()
         c.setFont("Helvetica-Bold", 12)
         title_width = c.stringWidth(title, "Helvetica-Bold", 12)
         c.drawString((width - title_width) / 2, y_position, title)
@@ -98,9 +102,7 @@ def create_pdf_from_prn(prn_file):
     def draw_text(text, font="Helvetica", size=10, bold=False):
         nonlocal y_position
         if y_position < bottom_margin + 20:  # Add buffer space for the footer
-            add_footer()
-            c.showPage()
-            y_position = height - top_margin
+            new_page()
         if bold:
             c.setFont("Helvetica-Bold", size)
         else:
@@ -149,10 +151,6 @@ def create_pdf_from_prn(prn_file):
                 else:
                     values = re.split(r'\s{2,}', clean_line)  # Split using two or more spaces
 
-    # Debugging: Print extracted headers and values
-    print(f"Extracted Headers: {headers}")
-    print(f"Extracted Values: {values}")
-
     # Ensure the table data is formatted correctly
     if len(headers) >= 4 and len(values) >= 3:
         # Correctly format the headers
@@ -160,9 +158,6 @@ def create_pdf_from_prn(prn_file):
         headers[3] = headers[3].replace("<", "").replace(">", "").replace("--", "").strip()
         headers = [f"Reject (<) {headers[1]}", "Accept Range", f"{headers[3]} (>) Reject"]
         
-        # Debugging: Print formatted headers
-        print(f"Formatted Headers: {headers}")
-
         table_data = [
             headers,  # Use the entire formatted headers list
             values[:3]  # We only need the first three values for the table
@@ -184,17 +179,32 @@ def create_pdf_from_prn(prn_file):
         _, table_height = table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)
         table_x_position = (width - (3 * col_widths[0])) / 2
         if y_position < table_height + bottom_margin + 20:  # Add buffer space for the footer
-            add_footer()
-            c.showPage()
-            y_position = height - top_margin
+            new_page()
         table.drawOn(c, table_x_position, y_position - table_height)
         y_position -= table_height + 20
     else:
         draw_text("No valid sort analysis data found.", bold=True)
     
-    # Add custom field "Reweigh of Rejected Caps"
-    draw_text("Reweigh of Rejected Caps: ____________", bold=True)
-    y_position -= 10
+    # Add custom field "Reweigh of Rejected Caps" in a table
+    reweigh_data = [["Reweigh of Rejected Caps Results:"]]
+    reweigh_table = Table(reweigh_data, colWidths=[width - left_margin - right_margin])
+    reweigh_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 0.5, colors.black),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6)
+    ]))
+    reweigh_table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
+    _, reweigh_table_height = reweigh_table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)
+    if y_position < reweigh_table_height + bottom_margin + 20:  # Add buffer space for the footer
+        new_page()
+    reweigh_table.drawOn(c, left_margin, y_position - reweigh_table_height)
+    y_position -= reweigh_table_height + 20
     
     # Remove the "Statistical Summary" title and push the table up
     samples_value = data_fields.get("Samples", "(Not Provided)")
@@ -241,9 +251,7 @@ def create_pdf_from_prn(prn_file):
     table_x_position = (width - table_width) / 2
     
     if y_position < stats_table_height + bottom_margin + 20:  # Add buffer space for the footer
-        add_footer()
-        c.showPage()
-        y_position = height - top_margin
+        new_page()
     stats_table.drawOn(c, table_x_position, y_position - stats_table_height)
     y_position -= stats_table_height + 20
     
@@ -279,23 +287,48 @@ def create_pdf_from_prn(prn_file):
         table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
         _, table_height = table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)  # Calculate table height
         if y_position < table_height + bottom_margin + 20:  # Add buffer space for the footer
-            add_footer()
-            c.showPage()
-            y_position = height - top_margin
+            new_page()
         table.drawOn(c, left_margin, y_position - table_height)
         y_position -= table_height + 20
     
+    # Add custom field "Reweigh of Rejected Caps Weights" in a table
+    reweigh_weights_data = [["Reweigh of Rejected Caps Weights:"]]
+    reweigh_weights_table = Table(reweigh_weights_data, colWidths=[width - left_margin - right_margin])
+    reweigh_weights_table.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 0.5, colors.black),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6)
+    ]))
+    reweigh_weights_table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
+    _, reweigh_weights_table_height = reweigh_weights_table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)
+    if y_position < reweigh_weights_table_height + bottom_margin + 20:  # Add buffer space for the footer
+        new_page()
+    reweigh_weights_table.drawOn(c, left_margin, y_position - reweigh_weights_table_height)
+    y_position -= reweigh_weights_table_height + 20
+
+    # Add "Reviewed by" on the left and "Date Reviewed" on the right at the end of the report
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(left_margin, y_position - 20, "Reviewed by: ____________")  # Add more space above
+    c.drawRightString(width - right_margin, y_position - 20, "Date Reviewed: ____________")
+    y_position -= 30  # Add more space below
+    
     add_footer()
     c.save()
-    print(f"PDF saved as {pdf_file}")
 
 class PRNHandler(FileSystemEventHandler):
     def on_created(self, event):
         if event.is_directory:
             return
         if event.src_path.endswith(".PRN"):
-            print(f"Event detected: created, Path: {event.src_path}")
+            print(f"\033[92mEvent detected: created, Path: {event.src_path}\033[0m")
             create_pdf_from_prn(event.src_path)
+            print(f"\033[94mPDF saved as {event.src_path.replace('.PRN', '.pdf')}\033[0m")
 
 observer = Observer()
 handler = PRNHandler()
@@ -303,7 +336,7 @@ observer.schedule(handler, WATCH_DIRECTORY, recursive=False)
 observer.start()
 try:
     while True:
-        time.sleep(1)
+        time.sleep(1)  # Sleep for 1 second
 except KeyboardInterrupt:
     observer.stop()
 observer.join()
