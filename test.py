@@ -98,7 +98,7 @@ def create_pdf_from_prn(prn_file):
         title_width = c.stringWidth(title, "Helvetica-Bold", 12)
         c.drawString((width - title_width) / 2, y_position, title)
         y_position -= 15
-    
+
     def draw_text(text, font="Helvetica", size=10, bold=False):
         nonlocal y_position
         if y_position < bottom_margin + 20:  # Add buffer space for the footer
@@ -130,7 +130,7 @@ def create_pdf_from_prn(prn_file):
             draw_text(f"{key}: {data_fields[key]}")
     y_position -= 10
     
-    draw_section("Sort Analysis Based on Target")
+    # Remove the black title "Sort Analysis Based on Target"
     
     # Extract and clean sort analysis data
     headers = []
@@ -159,20 +159,26 @@ def create_pdf_from_prn(prn_file):
         headers = [f"Reject (<) {headers[1]}", "Accept Range", f"{headers[3]} (>) Reject"]
         
         table_data = [
+            ["Sort Analysis Based on Target"],  # Add the new first row with the title
             headers,  # Use the entire formatted headers list
             values[:3]  # We only need the first three values for the table
         ]
         col_widths = [(width - left_margin - right_margin) / 3] * 3
         table = Table(table_data, colWidths=col_widths)
         table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),  # Use darkblue color
+            ('SPAN', (0, 0), (-1, 0)),  # Merge all columns in the first row
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),  # Use darkblue color for the title row
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
-            ('TEXTCOLOR', (0, 1), (-1, 1), colors.black),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+            ('BACKGROUND', (0, 1), (-1, 2), colors.lightgrey),  # Make the second and third row the same color
+            ('TEXTCOLOR', (0, 1), (-1, 2), colors.black),  # Make the text color black for the second and third row
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
         ]))
         table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
@@ -205,7 +211,7 @@ def create_pdf_from_prn(prn_file):
         new_page()
     reweigh_table.drawOn(c, left_margin, y_position - reweigh_table_height)
     y_position -= reweigh_table_height + 20
-    
+
     # Remove the "Statistical Summary" title and push the table up
     samples_value = data_fields.get("Samples", "(Not Provided)")
     stats_data = [
@@ -214,47 +220,62 @@ def create_pdf_from_prn(prn_file):
         ["Maximum: " + data_fields.get("Maximum", "(Not Provided)")],
         ["Minimum: " + data_fields.get("Minimum", "(Not Provided)")]
     ]
-    
+
     prn_text = "\n".join(prn_content)
     max_dev_match = re.search(r"Max Dev:\s*([\d.]+ mg\s+\d+\.\d+% of target)", prn_text)
-    std_dev_match = re.search(r"Std Dev:\s*([\d.]+ mg\s+\.\d+% Rel Std Dev)", prn_text)
+    std_dev_match = re.search(r"Std Dev:\s*([\d.]+ mg\s+\d+% Rel Std Dev)", prn_text)
 
     if max_dev_match:
         stats_data.append(["Max Dev: " + max_dev_match.group(1)])
     if std_dev_match:
         stats_data.append(["Std Dev: " + std_dev_match.group(1)])
-    
-    stats_table = Table(stats_data, colWidths=[200])  # Reduced the width of the table columns
+
+    # Format the data for the table
+    formatted_stats_data = [[f"Samples: {samples_value}", ""]]  # Keep the first row unchanged
+    for row in stats_data[1:]:
+        parts = row[0].split(' ')
+        if "Max Dev:" in row[0]:
+            column1 = "Max Dev: " + ' '.join(parts[2:3]) + ' mg'
+            column2 = ' '.join(parts[3:]).replace('mg ', '')  # Remove 'mg' from the right column if it exists
+        else:
+            column1 = ' '.join(parts[:2]) + ' mg'
+            column2 = ' '.join(parts[2:]).replace('mg ', '')  # Remove 'mg' from the right column if it exists
+        formatted_stats_data.append([column1, column2])
+
+    # Create the stats table
+    stats_table = Table(formatted_stats_data, colWidths=[width/2 - left_margin, width/2 - right_margin])  # Adjust column widths
     stats_table.setStyle(TableStyle([
+        ('SPAN', (0, 0), (-1, 0)),  # Merge all columns in the first row
+        ('ALIGN', (0, 0), (0, -1), 'CENTER'),  # Center the data in the left column
+        ('ALIGN', (1, 0), (1, -1), 'CENTER'),  # Center the data in the right column
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center the whole table
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
         ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
         ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
     ]))
 
     # Make the "Samples" value bold
-    for i, row in enumerate(stats_data):
+    for i, row in enumerate(formatted_stats_data):
         if "Samples:" in row[0]:
             stats_table.setStyle(TableStyle([
                 ('FONTNAME', (0, i), (0, i), 'Helvetica-Bold')
             ]))
-    
+
     stats_table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
     _, stats_table_height = stats_table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)  # Calculate table height
-    
+
     # Calculate x position to center the table
-    table_width = 200
-    table_x_position = (width - table_width) / 2
-    
+    table_width = width - left_margin - right_margin
+    table_x_position = left_margin
+
     if y_position < stats_table_height + bottom_margin + 20:  # Add buffer space for the footer
         new_page()
     stats_table.drawOn(c, table_x_position, y_position - stats_table_height)
     y_position -= stats_table_height + 20
-    
+
     weight_sections = re.split(r"WEIGHTS IN (.*?) RANGE", prn_text)[1:]
     for i in range(0, len(weight_sections), 2):
         range_name = weight_sections[i].strip()
@@ -264,14 +285,14 @@ def create_pdf_from_prn(prn_file):
         table_data = [[f"Weights in {range_name} Range"]]
         wrapped_lines = re.findall(r"(.{1,80})(?:\s|$)", values)
         clean_lines = [line.strip() for line in wrapped_lines if "----------------------------------------------------------------" not in line]
-        
+
         if not clean_lines:
             # If there's no data, insert a row with "N/A"
             clean_lines.append("N/A")
-        
+
         for line in clean_lines:
             table_data.append([line])
-        
+
         table = Table(table_data, colWidths=[width - left_margin - right_margin])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Revert to original color
@@ -283,20 +304,20 @@ def create_pdf_from_prn(prn_file):
             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ]))
-        
+
         table.wrapOn(c, width - left_margin - right_margin, height - top_margin - bottom_margin)
         _, table_height = table.wrap(width - left_margin - right_margin, height - top_margin - bottom_margin)  # Calculate table height
         if y_position < table_height + bottom_margin + 20:  # Add buffer space for the footer
             new_page()
         table.drawOn(c, left_margin, y_position - table_height)
         y_position -= table_height + 20
-    
+
     # Add custom field "Reweigh of Rejected Caps Weights" in a properly sized table
     reweigh_weights_data = [["Reweigh of Rejected Caps Weights:"]]
     # Adjust the number of rows to accommodate up to 10 weights
     for _ in range(10):
         reweigh_weights_data.append([""])
-    
+
     reweigh_weights_table = Table(reweigh_weights_data, colWidths=[width - left_margin - right_margin])
     reweigh_weights_table.setStyle(TableStyle([
         ('BOX', (0, 0), (-1, -1), 0.5, colors.black),
