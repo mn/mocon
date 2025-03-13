@@ -156,7 +156,7 @@ def create_pdf_from_prn(prn_file):
         # Correctly format the headers
         headers[1] = headers[1].replace("<", "").replace(">", "").replace("--", "").strip()
         headers[3] = headers[3].replace("<", "").replace(">", "").replace("--", "").strip()
-        headers = [f"Reject (<) {headers[1]}", "Accept Range", f"{headers[3]} (>) Reject"]
+        headers = [f"Reject (<) {headers[1]}", "Accepted Range", f"{headers[3]} (>) Reject"]
         
         table_data = [
             ["Sort Analysis Based on Target"],  # Add the new first row with the title
