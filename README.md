@@ -1,4 +1,8 @@
 MOCON Project’s End of Day Update Version:
+## Latest Version Update 3/13
++ Updated Sections and Graphs
+  
+![Alt text](https://i.imgur.com/M1Qug5v.png)
 
 ## Latest Version Update 3/13
 + Updated Graphs
