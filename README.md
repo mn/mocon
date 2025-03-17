@@ -1,6 +1,7 @@
 MOCON Project’s End of Day Update Version:
 ## Latest Version Update 3/17
 + Updated Sections and Graphs
++ Added more dynamic code for conversion 
   
 ![Alt text](https://i.imgur.com/M1Qug5v.png)
 
