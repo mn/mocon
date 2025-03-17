@@ -57,16 +57,22 @@ def create_pdf_from_prn(prn_file):
         return
     
     data_fields = {}
+    test_number_found = False
 
     for line in prn_content:
-        test_match = re.search(r"Test#:\s*(\d+)", line)
-        if test_match:
-            data_fields["Test#"] = test_match.group(1)
+        if not test_number_found:
+            test_match = re.search(r"Test#:\s*(\d+)", line)
+            if test_match:
+                data_fields["Test#"] = test_match.group(1)
+                test_number_found = True
 
         match = re.match(r"^(.*?):\s*(.*)$", line.strip())
         if match:
             key, value = match.groups()
             data_fields[key.strip()] = value.strip() if value else "(Not Provided)"
+    
+    if "Test#" not in data_fields:
+        data_fields["Test#"] = "(Not Provided)"
     
     y_position = height - top_margin
     
