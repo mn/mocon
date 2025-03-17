@@ -75,10 +75,10 @@ def create_pdf_from_prn(prn_file):
         c.drawImage(logo_path, width - right_margin - logo_width, height - top_margin + 20, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
     
     # Set title font and color to blue
-    c.setFont("Helvetica-Bold", 16)
+    c.setFont("Helvetica-Bold", 20)
     c.setFillColor(colors.blue)  # Title in blue
     title_text = "MOCON Automatic Balance Analysis System"
-    title_width = c.stringWidth(title_text, "Helvetica-Bold", 16)
+    title_width = c.stringWidth(title_text, "Helvetica-Bold", 20)
     c.drawString((width - title_width) / 2, y_position, title_text)
 
     # Reset text color to black for the rest of the document
