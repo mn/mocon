@@ -1,30 +1,38 @@
 MOCON Project’s End of Day Update Version:
-## Latest Version Update 3/17
+## Latest Version Update 4/10/26
++ Full redesign with AdvancedRx branded PDF design (navy & gold)
++ Parser now handles all PRN file format variations regardless of MOCON firmware
++ BAT file fixed — works on any machine, auto-installs dependencies
++ Various bug fixes and formatting improvements
+  
+![Alt text](https://i.imgur.com/R9h0gHV.png)
+
+## Latest Version Update 3/17/25
 + Updated Sections and Graphs
 + Added more dynamic code for conversion 
   
 ![Alt text](https://i.imgur.com/M1Qug5v.png)
 
-## Latest Version Update 3/13
+## Latest Version Update 3/13/25
 + Updated Graphs
 + Moved Date Signed & Reviewed Placeholders
   
 ![Alt text](https://i.imgur.com/bHQ6wpb.png)
 
-## Latest Version Update 3/12
+## Latest Version Update 3/12/25
 + Updated Graphs
 + Updated Custom Fields
 + Added Custom Fields
   
 ![Alt text](https://i.imgur.com/zAInUlr.png)
 
-## Latest Version Update 3/11
+## Latest Version Update 3/11/25
 + Added Graphs
 + Added Custom Field
   
 ![Alt text](https://i.imgur.com/F3y1UWq.png)
 
-## (Archived) Old Version Update 3/10
+## (Archived) Old Version Update 3/10/25
 ![Alt text](https://i.imgur.com/UaND1PU.png)
 
 ## Example Logic
